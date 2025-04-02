@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+:root {
+  font-family: 'Inter', sans-serif;
+}
+
+@supports (font-variation-settings: normal) {
+  :root {
+    font-family: 'Inter var', sans-serif;
+    font-variation-settings: 'opsz' auto;
+    text-rendering: geometricPrecision;
+  }
+}
+
+* {
+  user-select: none;
+}
+
+.opsz-xl {
+  font-variation-settings: "opsz" 28;
+  font-size: var(--text-2xl);
+}
+
+.textscroll{
+  animation: textscroll 20s linear infinite;
+  /* mask: linear-gradient(45deg, transparent, (white / 20%), transparent, (white / 20%)); */
+}
+
+@keyframes textscroll {
+  0%{
+    transform: translateX(100%);
+  }
+  50%{
+    transform: translateX(0%);
+  }
+  100%{
+    transform: translateX(100%);
+  }
+}
