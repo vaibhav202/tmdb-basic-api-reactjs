@@ -1,7 +1,6 @@
 import React from 'react'
 
 function Pagination({ setPage, previousPage, nextPage, renderPageNo, page, totalPages }) {
-    console.log(totalPages)
     return (
         <div className='grid grid-flow-col auto-cols-auto justify-center place-items-center gap-4 bg-gray-50 border border-black/10 text-gray-600 text-xl font-bold rounded p-4 size-full'>
             <span tabIndex='0' aria-label='Goto Previous Page' onClick={previousPage} className="material-symbols-rounded w-full md:hover:bg-gray-200 active:bg-gray-200 rounded-sm p-1 cursor-pointer">arrow_back</span>
