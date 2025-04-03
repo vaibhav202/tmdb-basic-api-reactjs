@@ -9,33 +9,64 @@ function App() {
 
   const apiToken = import.meta.env.VITE_TMDB_TOKEN
 
-  const [mediaType, setMediaType] = useState('movie', () => {
+  const [mediaType, setMediaType] = useState(() => {
     const savedMediaType = localStorage.getItem('mediatype')
-    return savedMediaType ? JSON.parse(savedMediaType) : 'movie'
+    return savedMediaType ? savedMediaType : 'movie'
   })
 
+  useEffect(() => {
+    localStorage.setItem('mediatype', mediaType.toString())
+  }, [mediaType])
+
   const [media, setMedia] = useState([])
+
 
   const [page, setPage] = useState(() => {
     const savedPage = localStorage.getItem('currentPage')
     return savedPage ? parseInt(savedPage) : 1
   })
 
+  const [totalPages, setTotalPages] = useState()
+
   useEffect(() => {
     localStorage.setItem('currentPage', page.toString())
   }, [page])
 
   function previousPage() {
-    if( page > 1)  setPage(page - 1)
+    if (page > 1) setPage(page - 1)
   }
 
   function nextPage() {
-    setPage(page + 1)
+    if (page < totalPages) {
+      setPage(page + 1)
+    }
+    else if (page > totalPages) {
+      setPage(totalPages)
+    }
   }
 
   function renderPageNo(e) {
-    setPage(e.target.value)
+    const pageValue = parseInt(e.target.value)
+    if (!isNaN(pageValue)) {
+      if(totalPages && pageValue > totalPages){
+        setPage(totalPages)
+      }
+      else if(pageValue < 1){
+        setPage(1)
+      }
+      else
+      setPage(pageValue)
+    }
+    else {
+      setPage(1)
+    }
   }
+
+  useEffect(() => {
+    if(totalPages && page > totalPages){
+      setPage(totalPages)
+    }
+  }, [totalPages])
 
   useEffect(() => {
     const fetchMedia = async () => {
@@ -50,17 +81,25 @@ function App() {
         }
         const res = await axios.request(options)
         setMedia(res.data.results)
+        setTotalPages(res.data.total_pages)
       }
-      catch (err) { console.error(err) }
+      catch (err) { window.alert(err) }
     }
 
     fetchMedia()
 
   }, [mediaType, page])
 
-  const [searchValue, setSearchValue] = useState('')
-  const [searchResults, setSearchResults] = useState([])
+  const [searchValue, setSearchValue] = useState(() => {
+    const savedSearchValue = localStorage.getItem('searchvalue')
+    return savedSearchValue.trim() !== '' ? savedSearchValue : ''
+  })
 
+  useEffect(() => {
+    localStorage.setItem('searchvalue', searchValue || '')
+  }, [searchValue])
+
+  const [searchResults, setSearchResults] = useState([])
 
   useEffect(() => {
     if (searchValue.trim() !== '') {
@@ -76,6 +115,7 @@ function App() {
           };
           const searchRes = await axios.request(options)
           setSearchResults(searchRes.data.results)
+          setTotalPages(searchRes.data.total_pages)
         }
         catch (err) { console.log(err) }
       }
@@ -88,57 +128,55 @@ function App() {
 
   function renderSearchValue(e) {
     setSearchValue(e.target.value)
-    // {
-    //   searchValue.trim() !== ' ' && (<SearchWrapper searchResults={searchResults} />)
-    // }
   }
 
-  const [mediaItems, setMediaItems] = useState(() => {
+  const [watchlistItems, setWatchlistItems] = useState(() => {
     const savedWatchlist = localStorage.getItem('watchlist')
     return savedWatchlist ? JSON.parse(savedWatchlist) : []
   })
 
   useEffect(() => {
-    localStorage.setItem('watchlist', JSON.stringify(mediaItems))
-  }, [mediaItems])
+    localStorage.setItem('watchlist', JSON.stringify(watchlistItems))
+  }, [watchlistItems])
 
   function addToWatchList(mediaData) {
-    const isAlreadyAdded = mediaItems.some(isSame => isSame.id === mediaData.id)
+    const isAlreadyAdded = watchlistItems.some(isSame => isSame.id === mediaData.id)
     if (isAlreadyAdded) {
       if (window.confirm(`Do you want to remove "${mediaData.original_title}" from watchlist?`)) {
-        const updatedWatchList = mediaItems.filter(isSame => isSame.id !== mediaData.id)
-        setMediaItems(updatedWatchList)
+        const updatedWatchList = watchlistItems.filter(isSame => isSame.id !== mediaData.id)
+        setWatchlistItems(updatedWatchList)
       }
     }
     else {
-      const watchlist = [...mediaItems, mediaData]
-      setMediaItems(watchlist)
+      const watchlist = [...watchlistItems, mediaData]
+      setWatchlistItems(watchlist)
     }
   }
 
-  const mediaWrapperProps ={
+  const mediaWrapperProps = {
     searchValue,
     searchResults,
     media,
     mediaType,
     setMediaType,
-    mediaItems,
+    watchlistItems,
     previousPage,
     nextPage,
     page,
     setPage,
     renderPageNo,
+    totalPages,
     addToWatchList,
   }
 
   return (
     <HashRouter >
       <Navbar setMediaType={setMediaType} mediaType={mediaType} searchValue={searchValue} renderSearchValue={renderSearchValue} searchResults={searchResults} />
-      <div className='overflow-y-auto h-full bg-neutral-200 border-black/10'>
+      <div className='size-full bg-gray-100 border-black/10 overflow-y-auto'>
         <Routes>
           <Route path='/' element={<MediaWrapper {...mediaWrapperProps} />} />
           <Route path='/tvshows' element={<MediaWrapper {...mediaWrapperProps} />} />
-          <Route path='/watchlist' element={<Watchlist media={media} mediaType={mediaType} mediaItems={mediaItems} addToWatchList={addToWatchList} />} />
+          <Route path='/watchlist' element={<Watchlist media={media} mediaType={mediaType} watchlistItems={watchlistItems} addToWatchList={addToWatchList} />} />
         </Routes>
       </div>
     </HashRouter>

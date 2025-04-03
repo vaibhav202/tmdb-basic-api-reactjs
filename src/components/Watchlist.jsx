@@ -1,14 +1,14 @@
 import React from 'react'
 import WatchlistCards from './WatchlistCards'
 
-function Watchlist({ mediaType, mediaItems, addToWatchList }) {
+function Watchlist({ mediaType, watchlistItems, addToWatchList }) {
   return (
     <main className='lg:grid-cols-3 md:grid-cols-2 grid grid-cols-1 auto-cols-[100%] gap-4 p-4 w-full
-    [&>h1]:w-full [&>h1]:col-span-full [&>h1]:text-left [&>h1]:text-2xl [&>h1]:font-black [&>h1]:text-neutral-800'>
+    [&>h1]:w-full [&>h1]:py-4 [&>h1]:col-span-full [&>h1]:text-center [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-gray-800'>
       <h1 className='row-start-1'>Watchlist</h1>
       {
-        mediaItems.length > 0 ? (
-          mediaItems.map((mediaData) => {
+        watchlistItems.length > 0 ? (
+          watchlistItems.map((mediaData) => {
             const titles = {
               movie: mediaData.original_title,
               tv: mediaData.original_name

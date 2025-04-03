@@ -18,7 +18,7 @@
 
 .opsz-xl {
   font-variation-settings: "opsz" 28;
-  font-size: var(--text-2xl);
+  font-size: 1.75rem;
 }
 
 .textscroll{
