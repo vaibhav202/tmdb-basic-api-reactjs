@@ -92,7 +92,7 @@ function App() {
 
   const [searchValue, setSearchValue] = useState(() => {
     const savedSearchValue = localStorage.getItem('searchvalue')
-    return savedSearchValue.trim() !== '' ? savedSearchValue : ''
+    return savedSearchValue && savedSearchValue.trim() !== '' ? savedSearchValue : ''
   })
 
   useEffect(() => {
