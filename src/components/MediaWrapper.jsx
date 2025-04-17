@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import MediaCards from './MediaCards'
 import Pagination from './Pagination'
+import Search from './Search'
 
-function MediaWrapper({ searchValue, searchResults, media, mediaType, watchlistItems, setPage, previousPage, nextPage, page, renderPageNo, totalPages, addToWatchList }) {
-
+function MediaWrapper({ error, searchValue, renderSearchValue, searchResults, media, mediaType, watchlistItems, setPage, previousPage, nextPage, page, renderPageNo, totalPages, addToWatchList }) {
   function renderMedia(item) {
     const isAlreadyAdded = watchlistItems.some(savedItem => savedItem.id === item.id)
     const titles = {
@@ -13,41 +13,69 @@ function MediaWrapper({ searchValue, searchResults, media, mediaType, watchlistI
     return (
       <MediaCards
         key={item.id}
-        searchResults={searchResults}
         mediaData={item}
         poster_path={item.poster_path}
-        original_title={titles[mediaType]}
+        media_title={titles[mediaType]}
         isAlreadyAdded={isAlreadyAdded}
         addToWatchList={addToWatchList}
       />
     )
   }
-
   const displayMedia = searchValue.trim() === '' ? media : searchResults
   const titleMediaType = {
     movie: 'Movies',
     tv: 'TV Shows'
   }
   const title = searchValue.trim() !== '' ?
-    (searchResults.length === 0 ?
-      (<><span className='text-pink-600'>No results</span> found for <span className='text-teal-600'>{searchValue}</span> in <span className='text-teal-600'>{titleMediaType[mediaType]}</span></>)
-      : (<>Search results for <span className='text-teal-600'>{searchValue}</span> in <span className='text-teal-600'>{titleMediaType[mediaType]}</span></>))
-    : (mediaType === 'movie' ? <>Trending <span className='text-teal-600'>Movies</span></> : <>Trending <span className='text-teal-600'>TV Shows</span></>)
-
+    (searchResults.length !== 0 ?
+      (<>Search results for <span className='gradient-text'>{searchValue}</span> in <span className='media-type'>{titleMediaType[mediaType]}</span></>)
+      :
+      (<><span>No results</span> found for <span className='gradient-text'>{searchValue}</span> in <span className='media-type'>{titleMediaType[mediaType]}</span></>))
+    :
+    (mediaType === 'movie' ? <>Trending <span className='media-type'>Movies</span></> : <>Trending <span className='media-type'>TV Shows</span></>)
   return (
-    <main className='flex flex-col justify-start items-center w-full gap-4
-      [&>h1]:w-full [&>h1]:px-4 [&>h1]:pt-8 [&>h1]:text-center [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-gray-800 [&>h1]:leading-7 
-    '>
-      <h1>{title}</h1>
-      <div className='lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 grid grid-cols-2 auto-cols-auto gap-4 px-4 pt-4'>
-        {displayMedia.map(item => renderMedia(item))}
-      </div>
-      {totalPages > 1 &&
-        <Pagination media={media} setPage={setPage} previousPage={previousPage} nextPage={nextPage} page={page} renderPageNo={renderPageNo} totalPages={totalPages} />
+    <>
+      <header className='header-wrapper'>
+        <Search
+          mediaType={mediaType}
+          searchResults={searchResults}
+          searchValue={searchValue}
+          renderSearchValue={renderSearchValue}
+        />
+        <h1 className='title'>
+          {media.length === 0 ?
+            (<>Loading Content<span className='gradient-text'>...</span></>)
+            :
+            error ?
+              (<>{`:(`} Unable to load content.<br />Reason: <span className='loading-error'>{error.message}</span></>)
+              :
+              (<>{title}</>)
+          }
+        </h1>
+      </header>
+      {media.length !== 0 &&
+        <main className='media-wrapper'>
+          {}
+          <label htmlFor="pageInput" className='text-slate-400'>You are on page number: {page}</label>
+          <div className='media-items-wrapper'>
+            {displayMedia.map(item => renderMedia(item))}
+          </div>
+          {totalPages > 1 &&
+            <Pagination
+              media={media}
+              setPage={setPage}
+              previousPage={previousPage}
+              nextPage={nextPage}
+              page={page}
+              renderPageNo={renderPageNo}
+              totalPages={totalPages}
+            />
+          }
+        </main>
       }
-
-    </main>
+    </>
   )
 }
+
 
 export default MediaWrapper

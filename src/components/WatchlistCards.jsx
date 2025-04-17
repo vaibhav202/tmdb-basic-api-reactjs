@@ -1,20 +1,17 @@
 import React from 'react'
 
-function WatchlistCards({mediaData, poster_path, original_title, original_name, vote_average, popularity, addToWatchList}) {
+function WatchlistCards({ mediaData, poster_path, media_title, vote_average, popularity, addToWatchList }) {
+  const posterUrl = `https://image.tmdb.org/t/p/w440_and_h660_face/${poster_path}`
   return (
-    <div className='grid grid-flow-col auto-cols-auto justify-start items-center gap-4 size-full overflow-clip rounded p-2 bg-gray-50 border border-black/10'>
-      <picture className='size-full bg-gray-300 overflow-clip rounded-xs border border-black/10
-                [&>img]:block [&>img]:w-[110px] [&>img]:h-[180px] [&>img]:object-cover [&>img]:object-center
-                '>
-        <img src={`https://image.tmdb.org/t/p/w440_and_h660_face/${poster_path}`} alt={original_title} />
-      </picture>
-      <div className='grid grid-flow-row auto-rows-fr justify-center place-items-start gap-2 w-full'>
-        <p className='text-lg text-start text-gray-800 font-bold leading-5'>{original_title}{original_name}</p>
-        <p className='text-lg text-start text-gray-800 font-medium leading-5'>Rating: {Math.floor(vote_average)}</p>
-        <p className='text-lg text-start text-gray-800 font-medium leading-5'>Popularity: {Math.floor(popularity)}</p>
-        <p onClick={() => addToWatchList(mediaData)} aria-label='Remove from watchlist' className='watchlist-add material-symbols-rounded p-1 bg-gray-200/80 rounded-sm ring ring-inset ring-gray-950/20 cursor-pointer'>
-          delete
-        </p>
+    <div className={`media-item ${poster_path === null && 'skeleton'}`}>
+      <div title={`Poster of ${media_title}`} style={{ backgroundImage: `url(${posterUrl})` }} className='media-item-poster'></div>
+      <div className='media-item-info flex-col divide-y divide-black/10 [&>p]:media-item-title [&>p]:watchlist-item-title'>
+        <p>{media_title}</p>
+        <p>Rating: {Math.floor(vote_average)}</p>
+        <p>Popularity: {Math.floor(popularity)}</p>
+        <button onClick={() => addToWatchList(mediaData)} title={`Remove ${media_title} from watchlist`}  aria-label='Remove item from watchlist' className='media-item-icon'>
+          <p className='material-symbols-outlined'>delete</p>
+        </button>
       </div>
     </div>
   )

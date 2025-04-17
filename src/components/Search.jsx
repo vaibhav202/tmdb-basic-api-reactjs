@@ -1,11 +1,24 @@
-import React, { useState } from 'react'
+import React from 'react'
+import SearchResults from './SearchResults'
 
-function Search({ searchValue, renderSearchValue }) {
+function Search({ searchValue, renderSearchValue, searchResults, mediaType }) {
   return (
-    <div className='order-4 w-full flex justify-center items-center gap-4 relative z-50'>
-      <input id='searchBar' type='text' autoFocus aria-label='Searchbar' placeholder='Search for movies and tv shows' onChange={renderSearchValue}
-        value={searchValue}
-        className='sm:w-[calc(100dvw*0.5)] sm:content-end focus:outline-0 focus:ring-2 focus:ring-teal-600 block ring ring-inset ring-gray-400 rounded-md text-gray-600 text-lg px-4 py-1 w-full bg-gray-50' />
+    <div>
+      <form className='searchbar-wrapper'>
+        <input id='searchBar' type='text' aria-label='Searchbar' placeholder={`Search for ${mediaType === 'movie' ? 'movies' : 'tv shows'}`} onChange={renderSearchValue}
+          value={searchValue}
+          className='searchbar'
+        />
+        {searchValue.trim() === '' &&
+          <label htmlFor='searchBar' className="searchbar-icon material-symbols-outlined">
+            search
+          </label>
+        }
+      </form>
+      {
+        searchValue.trim() !== '' &&
+        <SearchResults searchResults={searchResults} />
+      }
     </div>
   )
 }
