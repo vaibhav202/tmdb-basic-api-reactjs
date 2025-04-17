@@ -155,38 +155,6 @@ footer {
   @apply underline underline-offset-8 decoration-1 decoration-white/50 hover:decoration-cyan-400;
 }
 
-@utility menu-open-animate {
-  animation: open-animate-height 500ms linear;
-}
-
-@keyframes open-animate-height {
-  from {
-    max-height: 0dvh;
-    opacity: 0;
-  }
-
-  to {
-    max-height: 100dvh;
-    opacity: 1;
-  }
-}
-
-@utility menu-close-animate {
-  animation: close-animate-height 500ms linear;
-}
-
-@keyframes close-animate-height {
-  from {
-    max-height: 100dvh;
-    opacity: 1;
-  }
-
-  to {
-    max-height: 0dvh;
-    opacity: 0;
-  }
-}
-
 @utility gradient-animation {
   background: linear-gradient(
     45deg,
