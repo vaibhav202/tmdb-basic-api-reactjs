@@ -12,14 +12,17 @@ function Watchlist({ mediaType, watchlistItems, addToWatchList }) {
           {
             watchlistItems.length > 0 ? (
               watchlistItems.map(mediaData => {
-                const original_title = mediaData.original_title
-                const original_name = mediaData.original_name
+                const media_title = {
+                  'original_title': mediaData.original_title,
+                  'original_name': mediaData.original_name
+                }
                 return <WatchlistCards
                   key={mediaData.id}
                   mediaType={mediaType}
                   mediaData={mediaData}
                   poster_path={mediaData.poster_path}
-                  media_title={mediaData.media_type === 'movie' ? original_title : original_name}
+                  media_title={mediaData.media_type === 'movie' ? media_title['original_title'] : media_title['original_name']}
+                  media_type={mediaData.media_type === 'movie' ? 'Movie' : 'TV Show'}
                   addToWatchList={addToWatchList}
                   vote_average={mediaData.vote_average}
                   popularity={mediaData.popularity}
